@@ -1,0 +1,468 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Pixi Solitaire</title>
+        <style>
+            body {
+                background-color: #333333;
+            }
+            canvas{
+                border:2px solid white !important;
+                border-radius: 6px; -moz-border-radius: 6px; -webkit-border-radius: 6px;
+                display: block;
+                margin-left: auto;
+                margin-right: auto
+            }
+        </style>
+    </head>
+    <body>
+        <script src="https://pixijs.download/v4.5.5/pixi.min.js">
+        </script>
+        <script src="scripts/tink.js"></script>
+        <script src="scripts/hitTestRectangle.js"></script>
+        <script type="text/javascript">
+            let type = "WebGL"
+            if (!PIXI.utils.isWebGLSupported()) {
+                type = "canvas"
+            }
+
+            PIXI.utils.sayHello(type)
+            //Create a Pixi Application
+            let app = new PIXI.Application({
+                width: 1170, // default: 800
+                height: 720, // default: 600
+                antialias: true, // default: false
+                transparent: false, // default: false
+                resolution: 1       // default: 1
+            }
+            );
+            app.renderer.backgroundColor = 0x333333;
+            //app.renderer.autoResize = true;
+
+            document.body.appendChild(app.view);
+
+
+            PIXI.loader
+                    .add("images/pokersheet.json")
+                    .load(setup);
+
+            var sprite = [];
+            let id = PIXI.loader.resources["images/pokersheet.json"].textures;
+            let t = new Tink(PIXI, app.renderer.view);
+            let pointer = t.makePointer();
+            var cardset = [];
+            var grouoarea = [];
+            var cardsetcount = [0, 14, 28, 42];
+            let getCardButton;
+            let getcardorder = 0;
+            var cardContainer = [];
+            let PointsTopText;
+
+            function shuffleArray(array) {
+                for (var i = array.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var temp = array[i];
+                    array[i] = array[j];
+                    array[j] = temp;
+                }
+            }
+
+            function cardtype(num) {
+                let name = "";
+                switch (Math.floor(num / 14)) {
+                    case 0:
+                        name = name + "♠";
+                        break;
+                    case 1:
+                        name = name + "♥";
+                        break;
+                    case 2:
+                        name = name + "♣";
+                        break;
+                    case 3:
+                        name = name + "♦";
+                        break;
+                }
+                return  name + ((num + 1) % 14);
+            }
+
+
+            function setup() {
+                id = PIXI.loader.resources["images/pokersheet.json"].textures;
+
+                PointsTopText = new PIXI.Text(
+                        "YOU WIN",
+                        {fontFamily: 'Microsoft JhengHei', fontSize: 64, fill: 'white'}
+                );
+                PointsTopText.position.set(450, 320);
+
+
+                //draw 4 rectangle in right top conner
+                for (let i = 0; i < 4; i++) {
+                    cardset.push(new PIXI.Graphics());
+                    cardset[i].lineStyle(4, 0x9E9EB4, 1);
+                    cardset[i].beginFill(0x333333);
+                    cardset[i].drawRoundedRect(0, 0, 90, 126, 5);
+                    cardset[i].endFill();
+                    cardset[i].x = 730 + 100 * i;
+                    cardset[i].y = 10;
+                    app.stage.addChild(cardset[i]);
+                }
+
+                for (let i = 0; i < 7; i++) {
+                    grouoarea.push(new PIXI.Graphics());
+                    grouoarea[i].lineStyle(4, 0x9E9EB4, 1);
+                    grouoarea[i].beginFill(0x333333);
+                    grouoarea[i].drawRoundedRect(0, 0, 90, 126, 5);
+                    grouoarea[i].endFill();
+                    grouoarea[i].position.set(50 + 120 * (i + 1), 130 + 30);
+                    app.stage.addChild(grouoarea[i]);
+                }
+
+                getCardButton = t.button([id["PixelPlebes_V1_1x_Update002__Update001_27.png"]], 10, 10);
+                app.stage.addChild(getCardButton);
+
+                for (let i = 0; i < 55; i++) {
+                    /*
+                     if (i <= 9) {
+                     sprite.push(new PIXI.Sprite(id["PixelPlebes_V1_1x_Update002__Update001_0" + i + ".png"]));
+                     } else {
+                     sprite.push(new PIXI.Sprite(id["PixelPlebes_V1_1x_Update002__Update001_" + i + ".png"]));
+                     }
+                     */
+                    sprite.push(new PIXI.Sprite(id["PixelPlebes_V1_1x_Update002__Update001_" + ("0" + i).slice(-2) + ".png"]));
+                    sprite[i].x = -110;
+                    sprite[i].y = -10;
+                    sprite[i].name = i;
+
+
+                }
+                shuffleArray(sprite);
+                let linecount = 1;
+                let line = 1;
+                cardContainer.push(new PIXI.Container());
+                for (let i = 54; i >= 0 && line != 8; i--) {
+
+                    if (((sprite[i].name + 1) % 14) != 0) {
+                        sprite[i].position.set(50 + 120 * line, 130 + 30 * linecount);
+                        sprite[i].texture = PIXI.TextureCache["PixelPlebes_V1_1x_Update002__Update001_27.png"];
+                        cardContainer[line - 1].addChild(sprite[i]);
+                        if (line == linecount) {
+                            sprite[i].texture = PIXI.TextureCache["PixelPlebes_V1_1x_Update002__Update001_" + ("0" + sprite[i].name).slice(-2) + ".png"];
+                            app.stage.addChild(cardContainer[line - 1]);
+                            line++;
+                            linecount = 1;
+                            cardContainer.push(new PIXI.Container());
+
+                        } else {
+                            linecount++;
+                        }
+
+                        //t.makeDraggable(sprite[i]);
+                        //app.stage.addChild(sprite[i]);
+                    }
+                    getcardorder = i;
+                }
+                cardContainer.push(new PIXI.Container());
+
+
+
+
+                gameLoop();
+            }
+            var Draging = -1;
+            var nextcard = 0;
+            let Dragx;
+            let Dragy;
+            let Draggroup = -1;
+
+            function checkwin() {
+                if (cardsetcount[0] == 13 && cardsetcount[1] == 27 && cardsetcount[2] == 41 && cardsetcount[3] == 55) {
+                    return true;
+                }
+                return false;
+            }
+
+            var Frame = 30;
+            let loop = 0;
+
+            function gameLoop() {
+
+                //Start the loop
+                requestAnimationFrame(gameLoop);
+
+                //Update Tink
+                t.update();
+                if (!checkwin()) {
+                    if (Draging != -1 && cardContainer[8].children.length > 0) {
+
+                        cardContainer[8].x = pointer.x - (cardContainer[8].toGlobal(cardContainer[8].children[0].position).x - cardContainer[8].x) - 45;
+                        cardContainer[8].y = pointer.y - (cardContainer[8].toGlobal(cardContainer[8].children[0].position).y - cardContainer[8].y) + 15;
+                    }
+                    if (cardContainer[7].children.length > 0) {
+                        cardContainer[7].children[0].x = pointer.x - 45;
+                        cardContainer[7].children[0].y = pointer.y - 15;
+                    }
+                    app.stage.addChild(cardContainer[7]);
+                    app.stage.addChild(cardContainer[8]);
+
+                    pointer.press = () => {
+
+                        pointdown = true;
+                        Draging = -1;
+                        for (let i = 54; i >= 0; i--) {
+                            if (pointer.hitTestSprite(sprite[i]) && ((sprite[i].name + 1) % 14) != 0) {
+                                Draging = i;
+                                let group = -1;
+                                let grouporder = -1;
+                                Draggroup = group;
+                                for (let j = 0; j < 8; j++) {
+                                    if (cardContainer[j] == sprite[Draging].parent && group == -1) {
+                                        group = j;
+                                        Draggroup = group;
+                                        console.log("group" + j)
+                                        for (let k = 0; k < cardContainer[j].children.length; k++) {
+                                            if (pointer.hitTestSprite(cardContainer[j].children[k])) {
+                                                grouporder = k;
+                                            }
+                                        }
+                                        console.log("order" + grouporder);
+
+                                    }
+                                }
+                                let setnum = -1;
+                                for (let i = 0; i < 4; i++) {
+                                    if (pointer.hitTestSprite(cardset[i])) {
+                                        setnum = i;
+                                        console.log("hit set", i, "set top", (cardsetcount[setnum] - 1))
+                                    }
+                                }
+                                let find = false;
+                                for (let l = 54; l >= 0 && group != -1; l--) {
+                                    if (sprite[l].name == cardContainer[Draggroup].children[grouporder].name && !find && setnum == -1) {
+                                        console.log("finded", Draging);
+                                        Draging = l;
+                                        find = true;
+                                    }
+                                }
+                                for (let l = 54; l >= 0; l--) {
+                                    if (cardsetcount[setnum] - 1 == sprite[l].name) {
+                                        console.log("set top", (cardsetcount[setnum] - 1));
+                                        Draging = l;
+                                        find = true;
+                                    }
+                                }
+                                console.log("Draging" + Draging);
+                                console.log("i :" + i);
+                                if (!checkwin() && sprite[Draging].texture.textureCacheIds[0] == "PixelPlebes_V1_1x_Update002__Update001_27.png" && sprite[Draging].name != cardContainer[Draggroup].children[cardContainer[Draggroup].children.length - 1].name && !checkwin()) {
+                                    console.log("can't open");
+                                    Draging = -1;
+                                    Draggroup = -1;
+                                } else {
+                                    //console.log(Draging);
+                                    //console.log(sprite[Draging].texture.textureCacheIds[0] == "PixelPlebes_V1_1x_Update002__Update001_27.png");
+                                    //console.log(sprite[Draging].texture.textureCacheIds[0]);
+                                    if (Draggroup > -1 && !checkwin()) {
+                                        while (cardContainer[Draggroup].children.length != grouporder + 1) {
+                                            cardContainer[8].addChild(cardContainer[Draggroup].children[grouporder + 1]);
+                                        }
+                                        console.log("followsize" + cardContainer[8].children.length)
+                                        cardContainer[7].addChild(cardContainer[Draggroup].children[grouporder]);
+                                        console.log(cardtype(cardContainer[7].children[0].name));
+                                    }
+
+                                }
+
+                                if (Draging > -1 && !checkwin()) {
+                                    sprite[Draging].texture = PIXI.TextureCache["PixelPlebes_V1_1x_Update002__Update001_" + ("0" + sprite[Draging].name).slice(-2) + ".png"];
+                                    console.log('name:' + sprite[Draging].name + ' id:' + Draging + "  " + cardtype(sprite[Draging].name));
+                                    Dragx = sprite[Draging].x;
+                                    Dragy = sprite[Draging].y;
+                                    cardContainer[7].addChild(sprite[Draging]);
+                                }
+
+
+                                break;
+                            }
+                        }
+                        if (Draging > -1 && !checkwin()) {
+                            for (let i = 0; i < 4; i++) {
+                                if (sprite[Draging].name == cardsetcount[i] - 1) {
+                                    cardsetcount[i]--;
+                                }
+
+                            }
+                        }
+
+
+                    }
+
+
+
+                    getCardButton.press = () => {
+
+                        if (Draging == -1 && !checkwin()) {
+                            let done = false;
+                            let currtcard;
+                            if (nextcard - 1 < 0) {
+                                currtcard = getcardorder - 1;
+                            } else {
+                                currtcard = nextcard - 1;
+                            }
+                            if (sprite[currtcard].x == 110) {
+                                sprite[currtcard].position.set(-110, -10);
+                            }
+
+                            for (let i = nextcard; i < getcardorder && !done; i++) {
+                                if (((sprite[i].name + 1) % 14) != 0 && (sprite[i].parent == null || sprite[i].x == -110)) {
+                                    sprite[i].position.set(110, 10);
+                                    //t.makeDraggable(sprite[i]);
+                                    app.stage.addChild(sprite[i]);
+                                    nextcard = i + 1;
+                                    done = true;
+                                }
+                            }
+
+                            if (nextcard >= getcardorder || !done) {
+                                nextcard = 0;
+                                getCardButton.texture = PIXI.TextureCache["PixelPlebes_V1_1x_Update002__Update001_55.png"];
+                            } else {
+                                getCardButton.texture = PIXI.TextureCache["PixelPlebes_V1_1x_Update002__Update001_27.png"];
+                            }
+                        }
+
+                    };
+                    /*debug pos
+                     if (Draging > -1 && hitTestRectangle(sprite[Draging], cardset[0])) {
+                     console.log("hit!");
+                     }
+                     if (Draging > -1) {
+                     console.log(sprite[Draging].x, sprite[Draging].y);
+                     }
+                     if (Draggroup > -1) {
+                     console.log(cardContainer[7].x, cardContainer[7].y);
+                     }
+                     */
+
+                    function checkrange(a, b) {
+                        if (a % 14 - b % 14 != -1) {
+                            console.log("worng num" + a, b);
+                            return false;
+                        }
+                        console.log(a - b);
+                        if (!(Math.abs(a - b) == 15 || Math.abs(a - b) == 41 || Math.abs(a - b) == 13 || Math.abs(a - b) == 43)) {
+                            console.log("wrong color");
+                            return false;
+                        }
+                        return true;
+                    }
+
+                    pointer.release = () => {
+
+                        let moved = false;
+
+                        if (Draging > -1 && !checkwin()) {
+                            for (let i = 0; i < 4; i++) {
+                                if (hitTestRectangle(sprite[Draging], cardset[i])) {
+                                    if (sprite[Draging].name == cardsetcount[i] && cardContainer[8].children.length == 0) {
+                                        app.stage.addChild(cardContainer[7].children[0]);
+                                        sprite[Draging].x = 730 + 100 * i;
+                                        sprite[Draging].y = 10;
+                                        cardsetcount[i]++;
+                                        moved = true;
+
+                                    }
+                                }
+                            }
+
+                            for (let i = 0; i < 7 && !checkwin(); i++) {
+                                if (cardContainer[i].children.length > 0 && pointer.hitTestSprite(cardContainer[i].children[cardContainer[i].children.length - 1])) {
+                                    console.log("hit" + i);
+                                    if (checkrange(sprite[Draging].name, cardContainer[i].children[cardContainer[i].children.length - 1].name)) {
+                                        console.log("ok" + i);
+                                        cardContainer[i].addChild(cardContainer[7].children[0]);
+                                        cardContainer[i].children[cardContainer[i].children.length - 1].position.set(50 + 120 * (i + 1), 130 + 30 * cardContainer[i].children.length);
+                                        if (Draggroup > -1) {
+                                            while (cardContainer[8].children.length > 0) {
+                                                cardContainer[i].addChild(cardContainer[8].children[0]);
+                                                cardContainer[i].children[cardContainer[i].children.length - 1].position.set(50 + 120 * (i + 1), 130 + 30 * cardContainer[i].children.length);
+                                            }
+                                            Draggroup = -1;
+                                            cardContainer[7].position.set(0, 0);
+                                            cardContainer[8].position.set(0, 0);
+                                        }
+                                        moved = true;
+                                    }
+                                }
+                            }
+
+                            for (let i = 0; i < 7 && !checkwin(); i++) {
+                                if (cardContainer[i].children.length == 0 && pointer.hitTestSprite(grouoarea[i])) {
+                                    console.log("hit empty" + i);
+                                    cardContainer[i].addChild(cardContainer[7].children[0]);
+                                    cardContainer[i].children[0].position.set(50 + 120 * (i + 1), 130 + 30);
+                                    if (Draggroup > -1) {
+                                        while (cardContainer[8].children.length > 0) {
+                                            cardContainer[i].addChild(cardContainer[8].children[0]);
+                                            cardContainer[i].children[cardContainer[i].children.length - 1].position.set(50 + 120 * (i + 1), 130 + 30 * cardContainer[i].children.length);
+                                        }
+                                        Draggroup = -1;
+                                        cardContainer[7].position.set(0, 0);
+                                        cardContainer[8].position.set(0, 0);
+                                    }
+                                    moved = true;
+                                }
+                            }
+
+
+                            if (!moved && !checkwin()) {
+                                sprite[Draging].position.set(Dragx, Dragy);
+                                if (sprite[Draging].name == cardsetcount[Math.floor(sprite[Draging].name / 14)]) {
+                                    console.log("back");
+                                    cardsetcount[sprite[Draging].name / 14]++;
+                                }
+                                if (Draggroup > -1) {
+                                    cardContainer[Draggroup].addChild(cardContainer[7].children[0]);
+                                    while (cardContainer[8].children.length > 0) {
+                                        cardContainer[Draggroup].addChild(cardContainer[8].children[0]);
+                                    }
+                                    Draggroup = -1;
+                                    cardContainer[7].position.set(0, 0);
+                                    cardContainer[8].position.set(0, 0);
+                                } else {
+                                    app.stage.addChild(cardContainer[7].children[0]);
+                                }
+                            }
+                        }
+
+
+                        Draging = -1;
+
+                    }
+
+
+                } else {
+
+
+                    app.stage.addChild(PointsTopText);
+                    if (loop == 54 * Frame) {
+                        loop = 0;
+                    } else {
+                        loop++;
+                    }
+                    for (let i = 0; i < 55; i++) {
+                        app.stage.addChild(sprite[i]);
+                        let nextx = (540 + 270 * (Math.cos(2 * Math.PI * (i + loop / Frame) / 54)));
+                        let nexty = (300 + 270 * (Math.sin(2 * Math.PI * (i + loop / Frame) / 54)));
+                        sprite[i].x = nextx - (nextx - sprite[i].x) * 0.97;
+                        sprite[i].y = nexty - (nexty - sprite[i].y) * 0.97;
+                    }
+                }
+            }
+
+
+
+        </script>
+    </body>
+</html>
