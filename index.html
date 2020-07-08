@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title>Pixi Solitaire</title>
+        <link rel="manifest" href="manifest.json">
         <style>
             body {
                 background-color: #333333;
@@ -21,6 +22,18 @@
         </script>
         <script src="scripts/tink.js"></script>
         <script src="scripts/hitTestRectangle.js"></script>
+	<script>
+		// Register the service worker
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('./service-worker.js').then(function(registration) {
+		    // Registration was successful
+		    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+		}).catch(function(err) {
+		    // registration failed :(
+		    	console.log('ServiceWorker registration failed: ', err);
+		    });
+		}
+	</script>
         <script type="text/javascript">
             let type = "WebGL"
             if (!PIXI.utils.isWebGLSupported()) {
