@@ -9,8 +9,8 @@
                 background-color: #333333;
             }
             canvas{
-                border:2px solid white !important;
-                border-radius: 6px; -moz-border-radius: 6px; -webkit-border-radius: 6px;
+                /*border:2px solid white !important;
+                border-radius: 6px; -moz-border-radius: 6px; -webkit-border-radius: 6px;*/
                 display: block;
                 margin-left: auto;
                 margin-right: auto
@@ -22,18 +22,18 @@
         </script>
         <script src="scripts/tink.js"></script>
         <script src="scripts/hitTestRectangle.js"></script>
-	<script>
-		// Register the service worker
-		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('./service-worker.js').then(function(registration) {
-		    // Registration was successful
-		    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-		}).catch(function(err) {
-		    // registration failed :(
-		    	console.log('ServiceWorker registration failed: ', err);
-		    });
-		}
-	</script>
+        <script>
+            // Register the service worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./service-worker.js').then(function (registration) {
+                    // Registration was successful
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }).catch(function (err) {
+                    // registration failed :(
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            }
+        </script>
         <script type="text/javascript">
             let type = "WebGL"
             if (!PIXI.utils.isWebGLSupported()) {
@@ -43,8 +43,8 @@
             PIXI.utils.sayHello(type)
             //Create a Pixi Application
             let app = new PIXI.Application({
-                width: 1170, // default: 800
-                height: 720, // default: 600
+                width: 1130, // default: 800
+                height: 639, // default: 600
                 antialias: true, // default: false
                 transparent: false, // default: false
                 resolution: 1       // default: 1
@@ -58,6 +58,7 @@
 
             PIXI.loader
                     .add("images/pokersheet.json")
+                    .add("images/reset.png")
                     .load(setup);
 
             var sprite = [];
@@ -71,6 +72,7 @@
             let getcardorder = 0;
             var cardContainer = [];
             let PointsTopText;
+            var resetbutton;
 
             function shuffleArray(array) {
                 for (var i = array.length - 1; i > 0; i--) {
@@ -104,11 +106,36 @@
             function setup() {
                 id = PIXI.loader.resources["images/pokersheet.json"].textures;
 
+                let background = new PIXI.Graphics();
+                background.lineStyle(3, 0xffffff, 1);
+                background.beginFill(0x333333);
+                background.drawRoundedRect(3, 3, 1125, 620, 3);
+                background.endFill();
+                background.x = 0;
+                background.y = 0;
+                app.stage.addChild(background);
+
+                resetbutton = t.button(['images/reset.png']);
+                resetbutton.x = 15;
+                resetbutton.y = 150;
+                resetbutton.width = 80;
+                resetbutton.height = 80;
+                app.stage.addChild(resetbutton);
+
+
                 PointsTopText = new PIXI.Text(
                         "YOU WIN",
                         {fontFamily: 'Microsoft JhengHei', fontSize: 64, fill: 'white'}
                 );
-                PointsTopText.position.set(450, 320);
+                PointsTopText.position.set(450, 280);
+
+                PointsBottomText = new PIXI.Text(
+                        "Game Designed by s2031215 , Powered by PixiJS!\nDigital Card Deck is create by Devlyn JD",
+                        {fontFamily: 'Microsoft JhengHei', fontSize: 10, fill: 'white'}
+                );
+                PointsBottomText.position.set(10, 590);
+                app.stage.addChild(PointsBottomText);
+
 
 
                 //draw 4 rectangle in right top conner
@@ -186,6 +213,7 @@
             }
             var Draging = -1;
             var nextcard = 0;
+            var lastcard = -1;
             let Dragx;
             let Dragy;
             let Draggroup = -1;
@@ -207,6 +235,11 @@
 
                 //Update Tink
                 t.update();
+
+                resetbutton.press = () => {
+                    window.location.reload();
+                }
+
                 if (!checkwin()) {
                     if (Draging != -1 && cardContainer[8].children.length > 0) {
 
@@ -304,7 +337,6 @@
                                 if (sprite[Draging].name == cardsetcount[i] - 1) {
                                     cardsetcount[i]--;
                                 }
-
                             }
                         }
 
@@ -377,7 +409,7 @@
 
                         if (Draging > -1 && !checkwin()) {
                             for (let i = 0; i < 4; i++) {
-                                if (hitTestRectangle(sprite[Draging], cardset[i])) {
+                                if (hitTestRectangle(sprite[Draging], cardset[i]) || lastcard == Draging) {
                                     if (sprite[Draging].name == cardsetcount[i] && cardContainer[8].children.length == 0) {
                                         app.stage.addChild(cardContainer[7].children[0]);
                                         sprite[Draging].x = 730 + 100 * i;
@@ -388,8 +420,9 @@
                                     }
                                 }
                             }
+                            lastcard = Draging;
 
-                            for (let i = 0; i < 7 && !checkwin(); i++) {
+                            for (let i = 0; i < 7 && !checkwin() && !moved; i++) {
                                 if (cardContainer[i].children.length > 0 && pointer.hitTestSprite(cardContainer[i].children[cardContainer[i].children.length - 1])) {
                                     console.log("hit" + i);
                                     if (checkrange(sprite[Draging].name, cardContainer[i].children[cardContainer[i].children.length - 1].name)) {
@@ -410,7 +443,7 @@
                                 }
                             }
 
-                            for (let i = 0; i < 7 && !checkwin(); i++) {
+                            for (let i = 0; i < 7 && !checkwin() && !moved; i++) {
                                 if (cardContainer[i].children.length == 0 && pointer.hitTestSprite(grouoarea[i])) {
                                     console.log("hit empty" + i);
                                     cardContainer[i].addChild(cardContainer[7].children[0]);
@@ -466,8 +499,8 @@
                     }
                     for (let i = 0; i < 55; i++) {
                         app.stage.addChild(sprite[i]);
-                        let nextx = (540 + 270 * (Math.cos(2 * Math.PI * (i + loop / Frame) / 54)));
-                        let nexty = (300 + 270 * (Math.sin(2 * Math.PI * (i + loop / Frame) / 54)));
+                        let nextx = (540 + 250 * (Math.cos(2 * Math.PI * (i + loop / Frame) / 54)));
+                        let nexty = (250 + 250 * (Math.sin(2 * Math.PI * (i + loop / Frame) / 54)));
                         sprite[i].x = nextx - (nextx - sprite[i].x) * 0.97;
                         sprite[i].y = nexty - (nexty - sprite[i].y) * 0.97;
                     }
