@@ -116,8 +116,8 @@
                 app.stage.addChild(background);
 
                 resetbutton = t.button(['images/reset.png']);
-                resetbutton.x = 15;
-                resetbutton.y = 150;
+                resetbutton.x = 35;
+                resetbutton.y = 316;
                 resetbutton.width = 80;
                 resetbutton.height = 80;
                 app.stage.addChild(resetbutton);
@@ -136,7 +136,14 @@
                 PointsBottomText.position.set(10, 590);
                 app.stage.addChild(PointsBottomText);
 
-
+                let cardgetborder = new PIXI.Graphics();
+                cardgetborder.lineStyle(4, 0x9E9EB4, 1);
+                cardgetborder.beginFill(0x333333);
+                cardgetborder.drawRoundedRect(0, 0, 90, 126, 5);
+                cardgetborder.endFill();
+                cardgetborder.x = 30;
+                cardgetborder.y = 30;
+                app.stage.addChild(cardgetborder);
 
                 //draw 4 rectangle in right top conner
                 for (let i = 0; i < 4; i++) {
@@ -145,8 +152,8 @@
                     cardset[i].beginFill(0x333333);
                     cardset[i].drawRoundedRect(0, 0, 90, 126, 5);
                     cardset[i].endFill();
-                    cardset[i].x = 730 + 100 * i;
-                    cardset[i].y = 10;
+                    cardset[i].x = 1010;
+                    cardset[i].y = 20 + 136 * i;
                     app.stage.addChild(cardset[i]);
                 }
 
@@ -156,11 +163,11 @@
                     grouoarea[i].beginFill(0x333333);
                     grouoarea[i].drawRoundedRect(0, 0, 90, 126, 5);
                     grouoarea[i].endFill();
-                    grouoarea[i].position.set(50 + 120 * (i + 1), 130 + 30);
+                    grouoarea[i].position.set(50 + 120 * (i + 1), 20 + 30);
                     app.stage.addChild(grouoarea[i]);
                 }
 
-                getCardButton = t.button([id["PixelPlebes_V1_1x_Update002__Update001_27.png"]], 10, 10);
+                getCardButton = t.button([id["PixelPlebes_V1_1x_Update002__Update001_27.png"]], 30, 166);
                 app.stage.addChild(getCardButton);
 
                 for (let i = 0; i < 55; i++) {
@@ -185,7 +192,7 @@
                 for (let i = 54; i >= 0 && line != 8; i--) {
 
                     if (((sprite[i].name + 1) % 14) != 0) {
-                        sprite[i].position.set(50 + 120 * line, 130 + 30 * linecount);
+                        sprite[i].position.set(50 + 120 * line, 20 + 30 * linecount);
                         sprite[i].texture = PIXI.TextureCache["PixelPlebes_V1_1x_Update002__Update001_27.png"];
                         cardContainer[line - 1].addChild(sprite[i]);
                         if (line == linecount) {
@@ -217,9 +224,10 @@
             let Dragx;
             let Dragy;
             let Draggroup = -1;
+            var showcard = 21;
 
             function checkwin() {
-                if (cardsetcount[0] == 13 && cardsetcount[1] == 27 && cardsetcount[2] == 41 && cardsetcount[3] == 55) {
+                if ((cardsetcount[0] == 13 && cardsetcount[1] == 27 && cardsetcount[2] == 41 && cardsetcount[3] == 55) || showcard == 0) {
                     return true;
                 }
                 return false;
@@ -267,13 +275,13 @@
                                     if (cardContainer[j] == sprite[Draging].parent && group == -1) {
                                         group = j;
                                         Draggroup = group;
-                                        console.log("group" + j)
+                                        //console.log("group" + j)
                                         for (let k = 0; k < cardContainer[j].children.length; k++) {
                                             if (pointer.hitTestSprite(cardContainer[j].children[k])) {
                                                 grouporder = k;
                                             }
                                         }
-                                        console.log("order" + grouporder);
+                                        //console.log("order" + grouporder);
 
                                     }
                                 }
@@ -281,28 +289,28 @@
                                 for (let i = 0; i < 4; i++) {
                                     if (pointer.hitTestSprite(cardset[i])) {
                                         setnum = i;
-                                        console.log("hit set", i, "set top", (cardsetcount[setnum] - 1))
+                                        //console.log("hit set", i, "set top", (cardsetcount[setnum] - 1))
                                     }
                                 }
                                 let find = false;
                                 for (let l = 54; l >= 0 && group != -1; l--) {
                                     if (sprite[l].name == cardContainer[Draggroup].children[grouporder].name && !find && setnum == -1) {
-                                        console.log("finded", Draging);
+                                        //console.log("finded", Draging);
                                         Draging = l;
                                         find = true;
                                     }
                                 }
                                 for (let l = 54; l >= 0; l--) {
                                     if (cardsetcount[setnum] - 1 == sprite[l].name) {
-                                        console.log("set top", (cardsetcount[setnum] - 1));
+                                        //console.log("set top", (cardsetcount[setnum] - 1));
                                         Draging = l;
                                         find = true;
                                     }
                                 }
-                                console.log("Draging" + Draging);
-                                console.log("i :" + i);
+                                //console.log("Draging" + Draging);
+                                //console.log("i :" + i);
                                 if (!checkwin() && sprite[Draging].texture.textureCacheIds[0] == "PixelPlebes_V1_1x_Update002__Update001_27.png" && sprite[Draging].name != cardContainer[Draggroup].children[cardContainer[Draggroup].children.length - 1].name && !checkwin()) {
-                                    console.log("can't open");
+                                    //console.log("can't open");
                                     Draging = -1;
                                     Draggroup = -1;
                                 } else {
@@ -313,16 +321,22 @@
                                         while (cardContainer[Draggroup].children.length != grouporder + 1) {
                                             cardContainer[8].addChild(cardContainer[Draggroup].children[grouporder + 1]);
                                         }
-                                        console.log("followsize" + cardContainer[8].children.length)
+                                        //console.log("followsize" + cardContainer[8].children.length)
                                         cardContainer[7].addChild(cardContainer[Draggroup].children[grouporder]);
-                                        console.log(cardtype(cardContainer[7].children[0].name));
+                                        //console.log(cardtype(cardContainer[7].children[0].name));
                                     }
 
                                 }
 
                                 if (Draging > -1 && !checkwin()) {
-                                    sprite[Draging].texture = PIXI.TextureCache["PixelPlebes_V1_1x_Update002__Update001_" + ("0" + sprite[Draging].name).slice(-2) + ".png"];
-                                    console.log('name:' + sprite[Draging].name + ' id:' + Draging + "  " + cardtype(sprite[Draging].name));
+                                    if (sprite[Draging].texture.textureCacheIds[0] == "PixelPlebes_V1_1x_Update002__Update001_27.png") {
+                                        sprite[Draging].texture = PIXI.TextureCache["PixelPlebes_V1_1x_Update002__Update001_" + ("0" + sprite[Draging].name).slice(-2) + ".png"];
+                                        showcard--;
+                                        //console.log("left card to open" + showcard);
+                                    }
+
+
+                                    //console.log('name:' + sprite[Draging].name + ' id:' + Draging + "  " + cardtype(sprite[Draging].name));
                                     Dragx = sprite[Draging].x;
                                     Dragy = sprite[Draging].y;
                                     cardContainer[7].addChild(sprite[Draging]);
@@ -355,13 +369,13 @@
                             } else {
                                 currtcard = nextcard - 1;
                             }
-                            if (sprite[currtcard].x == 110) {
-                                sprite[currtcard].position.set(-110, -10);
+                            if (sprite[currtcard].x == 30 && sprite[currtcard].y == 30) {
+                                sprite[currtcard].position.set(-100, -100);
                             }
 
                             for (let i = nextcard; i < getcardorder && !done; i++) {
-                                if (((sprite[i].name + 1) % 14) != 0 && (sprite[i].parent == null || sprite[i].x == -110)) {
-                                    sprite[i].position.set(110, 10);
+                                if (((sprite[i].name + 1) % 14) != 0 && (sprite[i].parent == null || sprite[i].x == -100)) {
+                                    sprite[i].position.set(30, 30);
                                     //t.makeDraggable(sprite[i]);
                                     app.stage.addChild(sprite[i]);
                                     nextcard = i + 1;
@@ -392,12 +406,12 @@
 
                     function checkrange(a, b) {
                         if (a % 14 - b % 14 != -1) {
-                            console.log("worng num" + a, b);
+                            //console.log("worng num" + a, b);
                             return false;
                         }
-                        console.log(a - b);
+                        // console.log(a - b);
                         if (!(Math.abs(a - b) == 15 || Math.abs(a - b) == 41 || Math.abs(a - b) == 13 || Math.abs(a - b) == 43)) {
-                            console.log("wrong color");
+                            //console.log("wrong color");
                             return false;
                         }
                         return true;
@@ -412,11 +426,11 @@
                                 if (hitTestRectangle(sprite[Draging], cardset[i]) || lastcard == Draging) {
                                     if (sprite[Draging].name == cardsetcount[i] && cardContainer[8].children.length == 0) {
                                         app.stage.addChild(cardContainer[7].children[0]);
-                                        sprite[Draging].x = 730 + 100 * i;
-                                        sprite[Draging].y = 10;
+                                        sprite[Draging].x = 1010;
+                                        sprite[Draging].y = 20 + 136 * i;
                                         cardsetcount[i]++;
                                         moved = true;
-
+                                        //console.log("card move set" + i);
                                     }
                                 }
                             }
@@ -424,20 +438,21 @@
 
                             for (let i = 0; i < 7 && !checkwin() && !moved; i++) {
                                 if (cardContainer[i].children.length > 0 && pointer.hitTestSprite(cardContainer[i].children[cardContainer[i].children.length - 1])) {
-                                    console.log("hit" + i);
+                                    //console.log("hit" + i);
                                     if (checkrange(sprite[Draging].name, cardContainer[i].children[cardContainer[i].children.length - 1].name)) {
-                                        console.log("ok" + i);
+                                        //console.log("ok" + i);
                                         cardContainer[i].addChild(cardContainer[7].children[0]);
-                                        cardContainer[i].children[cardContainer[i].children.length - 1].position.set(50 + 120 * (i + 1), 130 + 30 * cardContainer[i].children.length);
+                                        cardContainer[i].children[cardContainer[i].children.length - 1].position.set(50 + 120 * (i + 1), 20 + 30 * cardContainer[i].children.length);
                                         if (Draggroup > -1) {
                                             while (cardContainer[8].children.length > 0) {
                                                 cardContainer[i].addChild(cardContainer[8].children[0]);
-                                                cardContainer[i].children[cardContainer[i].children.length - 1].position.set(50 + 120 * (i + 1), 130 + 30 * cardContainer[i].children.length);
+                                                cardContainer[i].children[cardContainer[i].children.length - 1].position.set(50 + 120 * (i + 1), 20 + 30 * cardContainer[i].children.length);
                                             }
                                             Draggroup = -1;
                                             cardContainer[7].position.set(0, 0);
                                             cardContainer[8].position.set(0, 0);
                                         }
+                                        //console.log("card move group" + i);
                                         moved = true;
                                     }
                                 }
@@ -445,13 +460,13 @@
 
                             for (let i = 0; i < 7 && !checkwin() && !moved; i++) {
                                 if (cardContainer[i].children.length == 0 && pointer.hitTestSprite(grouoarea[i])) {
-                                    console.log("hit empty" + i);
+                                    //console.log("card move empty");
                                     cardContainer[i].addChild(cardContainer[7].children[0]);
-                                    cardContainer[i].children[0].position.set(50 + 120 * (i + 1), 130 + 30);
+                                    cardContainer[i].children[0].position.set(50 + 120 * (i + 1), 20 + 30);
                                     if (Draggroup > -1) {
                                         while (cardContainer[8].children.length > 0) {
                                             cardContainer[i].addChild(cardContainer[8].children[0]);
-                                            cardContainer[i].children[cardContainer[i].children.length - 1].position.set(50 + 120 * (i + 1), 130 + 30 * cardContainer[i].children.length);
+                                            cardContainer[i].children[cardContainer[i].children.length - 1].position.set(50 + 120 * (i + 1), 20 + 30 * cardContainer[i].children.length);
                                         }
                                         Draggroup = -1;
                                         cardContainer[7].position.set(0, 0);
@@ -465,8 +480,8 @@
                             if (!moved && !checkwin()) {
                                 sprite[Draging].position.set(Dragx, Dragy);
                                 if (sprite[Draging].name == cardsetcount[Math.floor(sprite[Draging].name / 14)]) {
-                                    console.log("back");
-                                    cardsetcount[sprite[Draging].name / 14]++;
+                                    //console.log("back");
+                                    cardsetcount[Math.floor(sprite[Draging].name / 14)]++;
                                 }
                                 if (Draggroup > -1) {
                                     cardContainer[Draggroup].addChild(cardContainer[7].children[0]);
@@ -479,6 +494,7 @@
                                 } else {
                                     app.stage.addChild(cardContainer[7].children[0]);
                                 }
+                                //console.log("card move back");
                             }
                         }
 
@@ -492,6 +508,8 @@
 
 
                     app.stage.addChild(PointsTopText);
+                    resetbutton.x = 550;
+                    resetbutton.y = 370;
                     if (loop == 54 * Frame) {
                         loop = 0;
                     } else {
