@@ -6,9 +6,9 @@ https://greebles.itch.io/pixel-plebes<br>
 
 ## To-Do Function:<br>
 Double click -- Finish<br>
-New game     -- Finish<br>
-New win rule -- Finish<br>
-Mark board
+New Round    -- Finish<br>
+Win trigger  -- Finish<br>
+Score Board
 ## BUG:<br>
 Place card order bug<br>
 Click position<br>
