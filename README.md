@@ -11,5 +11,5 @@ https://greebles.itch.io/pixel-plebes<br>
 - [x] Progressive Web Apps
 - [ ] Score Board
 ## BUG:<br>
-- [ ] Place card order bug<br>
-- [ ] Click position<br>
+- [x] Double click order bug
+- [ ] Click position
