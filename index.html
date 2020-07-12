@@ -127,7 +127,7 @@
                         "YOU WIN",
                         {fontFamily: 'Microsoft JhengHei', fontSize: 64, fill: 'white'}
                 );
-                PointsTopText.position.set(450, 280);
+               PointsTopText.position.set(450, 210);
 
                 PointsBottomText = new PIXI.Text(
                         "Game Designed by s2031215 , Powered by PixiJS!\nDigital Card Deck is create by Devlyn JD",
@@ -417,12 +417,54 @@
                         return true;
                     }
 
+                    function checkinset(num) {
+                        for (let i = 0; i < 4; i++) {
+                            if (sprite[num].name == cardsetcount[i] && cardContainer[8].children.length == 0) {
+                                return i;
+                            }
+                        }
+                        return -1;
+                    }
+
                     pointer.release = () => {
 
                         let moved = false;
 
                         if (Draging > -1 && !checkwin()) {
-                            for (let i = 0; i < 4; i++) {
+
+                            for (let i = 0; i < 7 && !checkwin() && !moved; i++) {
+                                if (cardContainer[i].children.length > 0 && pointer.hitTestSprite(cardContainer[i].children[cardContainer[i].children.length - 1])) {
+                                    //console.log("hit" + i);
+                                    if (checkrange(sprite[Draging].name, cardContainer[i].children[cardContainer[i].children.length - 1].name)) {
+                                        //console.log("ok" + i);
+                                        let Draggroupnum = checkinset(Draging);
+                                        if (Draggroupnum > -1 && Draggroup == i&&lastcard == Draging) {
+                                            app.stage.addChild(cardContainer[7].children[0]);
+                                            sprite[Draging].x = 1010;
+                                            sprite[Draging].y = 20 + 136 * Draggroupnum;
+                                            cardsetcount[Draggroupnum]++;
+                                        } else {
+                                            cardContainer[i].addChild(cardContainer[7].children[0]);
+                                            cardContainer[i].children[cardContainer[i].children.length - 1].position.set(50 + 120 * (i + 1), 20 + 30 * cardContainer[i].children.length);
+                                            if (Draggroup > -1) {
+                                                while (cardContainer[8].children.length > 0) {
+                                                    cardContainer[i].addChild(cardContainer[8].children[0]);
+                                                    cardContainer[i].children[cardContainer[i].children.length - 1].position.set(50 + 120 * (i + 1), 20 + 30 * cardContainer[i].children.length);
+                                                }
+                                                Draggroup = -1;
+                                                cardContainer[7].position.set(0, 0);
+                                                cardContainer[8].position.set(0, 0);
+                                            }else{
+                                                Draging = -1;
+                                            }
+                                        }
+                                        //console.log("card move group" + i);
+                                        moved = true;
+                                    }
+                                }
+                            }
+
+                            for (let i = 0; i < 4 && !checkwin() && !moved; i++) {
                                 if (hitTestRectangle(sprite[Draging], cardset[i]) || lastcard == Draging) {
                                     if (sprite[Draging].name == cardsetcount[i] && cardContainer[8].children.length == 0) {
                                         app.stage.addChild(cardContainer[7].children[0]);
@@ -435,28 +477,6 @@
                                 }
                             }
                             lastcard = Draging;
-
-                            for (let i = 0; i < 7 && !checkwin() && !moved; i++) {
-                                if (cardContainer[i].children.length > 0 && pointer.hitTestSprite(cardContainer[i].children[cardContainer[i].children.length - 1])) {
-                                    //console.log("hit" + i);
-                                    if (checkrange(sprite[Draging].name, cardContainer[i].children[cardContainer[i].children.length - 1].name)) {
-                                        //console.log("ok" + i);
-                                        cardContainer[i].addChild(cardContainer[7].children[0]);
-                                        cardContainer[i].children[cardContainer[i].children.length - 1].position.set(50 + 120 * (i + 1), 20 + 30 * cardContainer[i].children.length);
-                                        if (Draggroup > -1) {
-                                            while (cardContainer[8].children.length > 0) {
-                                                cardContainer[i].addChild(cardContainer[8].children[0]);
-                                                cardContainer[i].children[cardContainer[i].children.length - 1].position.set(50 + 120 * (i + 1), 20 + 30 * cardContainer[i].children.length);
-                                            }
-                                            Draggroup = -1;
-                                            cardContainer[7].position.set(0, 0);
-                                            cardContainer[8].position.set(0, 0);
-                                        }
-                                        //console.log("card move group" + i);
-                                        moved = true;
-                                    }
-                                }
-                            }
 
                             for (let i = 0; i < 7 && !checkwin() && !moved; i++) {
                                 if (cardContainer[i].children.length == 0 && pointer.hitTestSprite(grouoarea[i])) {
@@ -509,7 +529,7 @@
 
                     app.stage.addChild(PointsTopText);
                     resetbutton.x = 550;
-                    resetbutton.y = 370;
+                    resetbutton.y = 320;
                     if (loop == 54 * Frame) {
                         loop = 0;
                     } else {
