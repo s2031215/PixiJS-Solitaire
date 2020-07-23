@@ -16,22 +16,20 @@
                 margin-right: auto
             }
         </style>
+
     </head>
     <body>
-        <script src="https://pixijs.download/v4.5.5/pixi.min.js">
-        </script>
+        <script src="scripts/pixi.min.js"></script>
         <script src="scripts/tink.js"></script>
         <script src="scripts/hitTestRectangle.js"></script>
         <script>
-            // Register the service worker
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./service-worker.js').then(function (registration) {
-                    // Registration was successful
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                }).catch(function (err) {
-                    // registration failed :(
-                    console.log('ServiceWorker registration failed: ', err);
-                });
+                navigator.serviceWorker.register('/service-worker.js')
+                        .then(reg => {
+                            console.log('ServiceWorker registered!', reg)
+                            reg.update();
+                        })
+                        .catch(err => console.log('Error!', err));
             }
         </script>
         <script type="text/javascript">
@@ -39,7 +37,6 @@
             if (!PIXI.utils.isWebGLSupported()) {
                 type = "canvas"
             }
-
             PIXI.utils.sayHello(type)
             //Create a Pixi Application
             let app = new PIXI.Application({
@@ -127,7 +124,7 @@
                         "YOU WIN",
                         {fontFamily: 'Microsoft JhengHei', fontSize: 64, fill: 'white'}
                 );
-               PointsTopText.position.set(450, 210);
+                PointsTopText.position.set(450, 210);
 
                 PointsBottomText = new PIXI.Text(
                         "Game Designed by s2031215 , Powered by PixiJS!\nDigital Card Deck is create by Devlyn JD",
@@ -438,7 +435,7 @@
                                     if (checkrange(sprite[Draging].name, cardContainer[i].children[cardContainer[i].children.length - 1].name)) {
                                         //console.log("ok" + i);
                                         let Draggroupnum = checkinset(Draging);
-                                        if (Draggroupnum > -1 && Draggroup == i&&lastcard == Draging) {
+                                        if (Draggroupnum > -1 && Draggroup == i && lastcard == Draging) {
                                             app.stage.addChild(cardContainer[7].children[0]);
                                             sprite[Draging].x = 1010;
                                             sprite[Draging].y = 20 + 136 * Draggroupnum;
@@ -454,7 +451,7 @@
                                                 Draggroup = -1;
                                                 cardContainer[7].position.set(0, 0);
                                                 cardContainer[8].position.set(0, 0);
-                                            }else{
+                                            } else {
                                                 Draging = -1;
                                             }
                                         }
@@ -544,8 +541,6 @@
                     }
                 }
             }
-
-
 
         </script>
     </body>

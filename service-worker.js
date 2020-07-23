@@ -1,35 +1,64 @@
-self.addEventListener('install', function(event) {
-  self.skipWaiting();
-  
-  var offlinePage = new Request('offline.html');
+
+
+const filesToCache = [
+    '/',
+    '/images/icons-192.png',
+    '/images/pokersheet.png',
+    '/images/pokersheet.json',
+    '/images/reset.png',
+    '/favicon.ico',
+    '/index.html',
+    '/scripts/hitTestRectangle.js',
+    '/scripts/tink.js',
+    '/scripts/pixi.min.js',
+    '/manifest.json',
+    '/service-worker.js'
+
+];
+
+const cacheName = 'offline-21-7-2020';
+const dataCacheName = 'offline-data';
+
+// install
+self.addEventListener('install', event => {
+    console.log('installing…');
+    self.skipWaiting();
+    event.waitUntil(
+            caches.open(cacheName).then(cache => {
+        console.log('Caching app ok');
+        return cache.addAll(filesToCache);
+    })
+            );
+});
+
+// activate
+self.addEventListener('activate', event => {
+  console.log('[ServiceWorker] Activate');
   event.waitUntil(
-  fetch(offlinePage).then(function(response) {
-    return caches.open('offline2').then(function(cache) {
-      return cache.put(offlinePage, response);
-    });
-  }));
-}); self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    fetch(event.request).catch(function(error) {
-        return caches.open('offline2').then(function(cache) {
-          return cache.match('offline.html');
-      });
-    }));
-}); self.addEventListener('refreshOffline', function(response) {
-  return caches.open('offline2').then(function(cache) {
-    return cache.put(offlinePage, response);
-  });
-}); self.addEventListener('push', function (event) {
-  var data = event.data.json();   var opts = {
-    body: data.body,
-    icon: data.icon,
-    data: {
-      url: data.url
-    }
-  };
-  event.waitUntil(self.registration.showNotification(data.title, opts));
-}); self.addEventListener('notificationclick', function(event) {
-  var data = event.notification.data;   event.notification.close();   event.waitUntil(
-    clients.openWindow(data.url)
+    caches.keys()
+    .then(keyList => {
+      return Promise.all(keyList.map(key => {
+        if (key !== cacheName) {
+          return caches.delete(key);
+        }
+      }));
+    })
   );
 });
+
+// fetch
+self.addEventListener('fetch', event => {
+    console.log('now fetch!');
+    event.respondWith(
+            caches.match(event.request).then(function (response) {
+        return response || fetch(event.request).then(res =>
+            caches.open(dataCacheName)
+                    .then(function (cache) {
+                        cache.put(event.request, res.clone());
+                        return res;
+                    })
+        );
+    })
+            );
+})
+
