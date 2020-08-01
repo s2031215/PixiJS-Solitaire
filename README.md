@@ -11,7 +11,7 @@ Pixi solitaire is a solitaire game on PixiJs, this game can run in Offline mode 
 - [x] Double click place card
 - [x] Win trigger
 - [x] Progressive Web Apps
-- [x] Offline Play Support (SSL require)
+- [x] Offline Play Support (Require SSL)
 - [ ] Score Board
 - [ ] Multi touch Support
 ## License
