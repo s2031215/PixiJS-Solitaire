@@ -5,6 +5,7 @@ A Web solitaire game using PixiJsV4.<br>
 ## About PixiJs solitaire
 
 Pixi solitaire is a solitaire game on PixiJs, this game can run in Offline mode and PWA in smartphone.
+You can play this game in https://s2031215.github.io/PixiJS-Solitaire/index.html
 
 ## Feature:<br>
 
