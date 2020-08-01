@@ -1,6 +1,6 @@
 # PixiJs solitaire
-![image](https://github.com/s2031215/pixi_solitaire/blob/master/Pixi_Solitaire_screenshot.png)
 A Web solitaire game using PixiJsV4.<br>
+![image](https://github.com/s2031215/pixi_solitaire/blob/master/Pixi_Solitaire_screenshot.png)
 
 ## About PixiJs solitaire
 
