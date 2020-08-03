@@ -24,7 +24,7 @@
         <script src="scripts/hitTestRectangle.js"></script>
         <script>
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/service-worker.js')
+                navigator.serviceWorker.register('/PixiJS-Solitaire/service-worker.js')
                         .then(reg => {
                             console.log('ServiceWorker registered!', reg)
                             reg.update();
