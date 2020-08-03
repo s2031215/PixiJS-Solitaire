@@ -17,5 +17,7 @@ You can play this in https://s2031215.github.io/PixiJS-Solitaire/index.html
 - [ ] Multi touch Support
 ## License
 
+Copyright © 2020 s2031215<br>
+This project itself is licensed under the Apache-2.0 License<br>
 The Pixel Plebes Digital Card Deck is create by Devlyn JD<br>
 https://greebles.itch.io/pixel-plebes<br>
