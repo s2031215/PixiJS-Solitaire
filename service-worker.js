@@ -16,7 +16,7 @@ const filesToCache = [
 
 ];
 
-const cacheName = 'offline-4-8-2020';
+const cacheName = 'offline-3-8-2020';
 const dataCacheName = 'offline-data';
 
 // install
