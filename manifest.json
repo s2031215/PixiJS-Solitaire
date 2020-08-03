@@ -3,12 +3,12 @@
   "name": "Pixi Solitaire",
   "icons": [
     {
-      "src": "/images/icons-192.png",
+      "src": "/PixiJS-Solitaire/images/icons-192.png",
       "type": "image/png",
       "sizes": "192x192"
     }
   ],
-  "start_url": ".",
+  "start_url": "/PixiJS-Solitaire/",
   "background_color": "#3367D6",
   "display": "standalone",
   "orientation": "landscape"
