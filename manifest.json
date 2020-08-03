@@ -8,8 +8,8 @@
       "sizes": "192x192"
     }
   ],
-  "start_url": "/PixiJS-Solitaire/",
+  "start_url": "./PixiJS-Solitaire/index.html",
   "background_color": "#3367D6",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "landscape"
 }
