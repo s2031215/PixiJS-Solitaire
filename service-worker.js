@@ -1,22 +1,22 @@
 
 
 const filesToCache = [
-    '/',
-    '/images/icons-192.png',
-    '/images/pokersheet.png',
-    '/images/pokersheet.json',
-    '/images/reset.png',
-    '/favicon.ico',
-    '/index.html',
-    '/scripts/hitTestRectangle.js',
-    '/scripts/tink.js',
-    '/scripts/pixi.min.js',
-    '/manifest.json',
-    '/service-worker.js'
+    '/PixiJS-Solitaire/',
+    '/PixiJS-Solitaire/images/icons-192.png',
+    '/PixiJS-Solitaire/images/pokersheet.png',
+    '/PixiJS-Solitaire/images/pokersheet.json',
+    '/PixiJS-Solitaire/images/reset.png',
+    '/PixiJS-Solitaire/favicon.ico',
+    '/PixiJS-Solitaire/index.html',
+    '/PixiJS-Solitaire/scripts/hitTestRectangle.js',
+    '/PixiJS-Solitaire/scripts/tink.js',
+    '/PixiJS-Solitaire/scripts/pixi.min.js',
+    '/PixiJS-Solitaire/manifest.json',
+    '/PixiJS-Solitaire/service-worker.js'
 
 ];
 
-const cacheName = 'offline-21-7-2020';
+const cacheName = 'offline-3-8-2020';
 const dataCacheName = 'offline-data';
 
 // install
